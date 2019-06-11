@@ -1,10 +1,10 @@
 <?php
 
-namespace JeroenZwart\CsvSeeder;
+namespace bfinlay\SpreadsheetSeeder;
 
 use Illuminate\Support\ServiceProvider;
 
-class CsvSeederServiceProvider extends ServiceProvider
+class SpreadsheetSeederServiceProvider extends ServiceProvider
 {
     /**
 	 * Indicates if loading of the provider is deferred.

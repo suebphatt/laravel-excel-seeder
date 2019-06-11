@@ -1,11 +1,11 @@
 <?php
 
-namespace JeroenZwart\CsvSeeder;
+namespace bfinlay\SpreadsheetSeeder;
 
 use Validator;
 use Hash;
 
-class CsvRowParser
+class RowComposer
 {
     private $header;
     private $defaults     = [];
@@ -17,7 +17,7 @@ class CsvRowParser
     private $name;
     private $value;
     private $row;
-    private $parsedRow;
+    private $composedRow;
     
     /**
      * Set the header and possible options to add or parse a row
@@ -42,12 +42,12 @@ class CsvRowParser
     }
 
     /**
-     * Parse a CSV row to a database row
+     * Compose a row into a database row
      *
      * @param array $row
      * @return array Returns the parsed row
      */
-    public function parseRow( $row )
+    public function compose($row )
     {
         $this->row = $row;
 
@@ -67,14 +67,14 @@ class CsvRowParser
 
             $this->doHashable();
 
-            $this->parsedRow[ $this->key ] = $this->value;
+            $this->composedRow[ $this->key ] = $this->value;
         }
 
         $this->addDefaults();
         
         $this->addTimestamps();
 
-        return $this->parsedRow;
+        return $this->composedRow;
     }
 
     /**
@@ -99,7 +99,7 @@ class CsvRowParser
      */
     private function init()
     {
-        $this->parsedRow = [];
+        $this->composedRow = [];
     }
 
     /**
@@ -167,7 +167,7 @@ class CsvRowParser
 
         foreach( $this->defaults as $key => $value )
         {
-            $this->parsedRow[ $key ] = $value;
+            $this->composedRow[ $key ] = $value;
         }
     }
     
@@ -182,8 +182,8 @@ class CsvRowParser
 
         if( $this->timestamps === TRUE ) $this->timestamps = date('Y-m-d H:i:s');
 
-        $this->parsedRow[ 'created_at' ] = $this->timestamps;
-        $this->parsedRow[ 'updated_at' ] = $this->timestamps;
+        $this->composedRow[ 'created_at' ] = $this->timestamps;
+        $this->composedRow[ 'updated_at' ] = $this->timestamps;
     }   
 
 }

@@ -1,33 +1,41 @@
-# Laravel CSV Seeder
-> #### Seed your database using CSV files with Laravel
+# Laravel Spreadsheet Seeder
+> #### Seed your database using CSV files, XLSX files, and more with Laravel
 
-With this package you can save time for seeding your database. Instead of typing out the seeder files, you can use CSV files to fill up the database of your project. There are configuration options available to control the insert the data of your CSV files.
+With this package you can save time seeding your database. Instead of typing out seeder files, you can use CSV, XLSX, or any supported spreadsheet file format to load your project's database. There are configuration options available to control the insertion of data from your spreadsheet files.
+
+This project was forked from [laravel-csv-seeder](https://github.com/jeroenzwart/laravel-csv-seeder) and rewritten to support processing multiple input files and to use the [PhpSpreadsheet](https://github.com/PHPOffice/PhpSpreadsheet) library to support XLSX and other file formats.
 
 ### Features
 
-- Automatically try to resolve CSV filename to table name.
-- Automatic mapping of CSV headers to table column names.
-- Skip seeding data with a prefix at in the CSV headers.
+- Support CSV, XLS, XLSX, ODF, Gnumeric, XML, HTML, SLK files through [PhpSpreadsheet](https://github.com/PHPOffice/PhpSpreadsheet) library
+- Seed from multiple spreadsheet files per Laravel seeder class
+- Automatically resolve CSV filename to table name.
+- Automatically resolve XLSX worksheet tabs to table names.
+- Automatically map CSV amd XLSX headers to table column names.
+- Automatically determine delimiter for CSV files, including comma `,`, tab `\t`, pipe `|`, and semi-colon `;`
+- Skip seeding data columns by using a prefix character in the spreadsheet column header.
 - Hash values with a given array of column names.
-- Seed default values in to table columns.
+- Seed default values into table columns.
 - Adjust Laravel's timestamp at seeding.
 
 ## Installation
-- Require this package directly by `composer require --dev jeroenzwart/laravel-csv-seeder`
+- Require this package directly by `composer require --dev bfinlay/laravel-spreadsheet-seeder`
 - Or add this package in your composer.json and run `composer update`
 
-    "jeroenzwart/laravel-csv-seeder": "1.*"
+    ```
+    "bfinlay/laravel-csv-seeder": "~2.0"
+    ```
 
 ## Basic usage
-Extend your seed classes with `JeroenZwart\CsvSeeder\CsvSeeder` and set the variable `$this->file` with the path of the CSV file. Tablename is not required, if the filename of the CSV is the same as the tablename. At last call `parent::run()` to seed. A seed class will look like this;
+Extend your seed classes with `bfinlay\SpreadsheetSeeder\SpreadsheetSeeder` and set the variable `$this->file` with the paths of the spreadsheet files.  This can be a string or array of strings, and accepts wildcards.  Tablename is not required if the filename or worksheet tab of the spreadsheet is the same as the tablename. Lastly, call `parent::run()` to seed. A seed class will look like this;
 ```php
-use JeroenZwart\CsvSeeder\CsvSeeder;
+use bfinlay\SpreadsheetSeeder\SpreadsheetSeeder;
 
-class UsersTableSeeder extends CsvSeeder
+class UsersTableSeeder extends SpreadsheetSeeder
 {
     public function __construct()
     {
-        $this->file = '/database/seeds/csvs/users.csv';
+        $this->file = '/database/seeds/csvs/*.csv'; // specify relative to Laravel project base path
     }
     
     /**
@@ -43,13 +51,18 @@ class UsersTableSeeder extends CsvSeeder
     }
 }
 ```
-Place your CSV into the path */database/seeds/csvs/* of your Laravel project or whatever path you specify in the constructor. As default the given CSV require a header row with names, matching the columns names of the table in your database. Looks like this;
+Place your spreadsheets into the path */database/seeds/csvs/* of your Laravel project or whatever path you specify in the constructor. As default the given spreadsheet requires a header row with names that match the columns names of the table in your database.  
 
+A CSV example:
+```
     first_name,last_name,birthday
     Foo,Bar,1970-01-01
     John,Doe,1980-01-01
+```
 
 ## Configuration
+- `file` *(string*) or *(array []*) - list of files or directories to process.   Can include wildcards.
+- `extension` *(string 'csv'*) - the default extension used when a directory is speficied in `file`
 - `tablename` *(string*) - Name of table to insert data.
 - `truncate` *(boolean TRUE)*  - Truncate the table before seeding.
 - `header` *(boolean TRUE)* - CSV has a header row, set FALSE if not.
@@ -60,24 +73,9 @@ Place your CSV into the path */database/seeds/csvs/* of your Laravel project or 
 - `hashable` *(array ['password'])* - Array of column names to hash there values. It uses Hash::make().
 - `defaults` *(array [])* - Array of table columns and its values to seed with CSV file.
 - `timestamps` *(string/boolean TRUE)* - Set Laravel's timestamp in the database while seeding; set as TRUE will use current time.
-- `delimiter` *(string ;)* - The used delimiter in the CSV files.
-- `chunk` *(integer 50)* - Insert the data of rows every `chunk` while reading the CSV.
+- `delimiter` *(string NULL)* - The delimiter used in the CSV files.  Automatically determined by library, but can be overriden with this setting.
+- `chunk` *(integer 50)* - Insert the data of rows every `chunk` while reading the CSV. _Note: the PhpSpreadsheet library loads the entire spreadsheet file into memory.  See issue #1_
 
-## Tip
-Users of Microsoft Excel can use a macro to export there worksheets to CSV. Easiest is to name your worksheets as table name. Use the following macro to export;
-
-    Public Sub SaveWorksheetsAsCsv()
-    ActiveWorkbook.Save
-    Dim xWs As Worksheet
-    Dim xDir As String
-    Dim folder As FileDialog
-    Set folder = Application.FileDialog(msoFileDialogFolderPicker)
-    If folder.Show <> -1 Then Exit Sub
-    xDir = folder.SelectedItems(1)
-    For Each xWs In Application.ActiveWorkbook.Worksheets
-    xWs.SaveAs xDir & "\" & xWs.Name, xlCSV
-    Next
-    End Sub
 
 ## Examples
 #### Table with given timestamps

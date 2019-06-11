@@ -1,28 +1,31 @@
 <?php
 
-namespace JeroenZwart\CsvSeeder;
+namespace bfinlay\SpreadsheetSeeder;
 
 use DB;
 
-class CsvHeaderParser
+class HeaderComposer
 {   
     private $aliases      = [];
     private $skipper      = '%';
 
+    /**
+     * @var Table
+     */
     private $table;
     private $key;
     private $name;
 
-    private $parsedHeader = [];
+    private $composedHeader = [];
 
     /**
      * Set the tablename
      *
      * @param string $tablename
      */
-    public function __construct( $tablename, $aliases, $skipper )
+    public function __construct( $table, $aliases, $skipper )
     {
-        $this->table = DB::getSchemaBuilder()->getColumnListing( $tablename );
+        $this->table = $table;
 
         $this->aliases = $aliases === NULL ? $this->aliases : $aliases;
 
@@ -30,12 +33,12 @@ class CsvHeaderParser
     }
 
     /**
-     * Parse the given header for seeding
+     * Compose the given header for seeding
      *
      * @param array $header
-     * @return array The parsed header
+     * @return array The composed header
      */
-    public function parseHeader( $header )
+    public function compose( $header )
     {
         if( empty($this->table) or empty($header) ) return;
 
@@ -48,11 +51,11 @@ class CsvHeaderParser
             $this->checkColumns();;
         }
 
-        return $this->parsedHeader;
+        return $this->composedHeader;
     }
 
     /**
-     * Rename columns with aliassen
+     * Rename columns with aliases
      *
      * @return void
      */
@@ -63,7 +66,7 @@ class CsvHeaderParser
         if( array_key_exists($this->name, $this->aliases) )
         {
             $this->name = $this->aliases[$this->name];
-            $this->parsedHeader[$this->key] = $this->name;
+            $this->composedHeader[$this->key] = $this->name;
         }
     }
 
@@ -76,7 +79,7 @@ class CsvHeaderParser
     {
         if( ! isset($this->skipper) ) return; 
 
-        if( $this->skipper != substr($this->name, 0, 1) ) $this->parsedHeader[$this->key] = $this->name;
+        if( $this->skipper != substr($this->name, 0, 1) ) $this->composedHeader[$this->key] = $this->name;
     }
     
     /**
@@ -86,7 +89,7 @@ class CsvHeaderParser
      */
     private function checkColumns()
     {
-        if( ! in_array($this->name, $this->table) ) unset($this->parsedHeader[$this->key]);
+        if( ! $this->table->columnExists($this->name) ) unset($this->composedHeader[$this->key]);
     }
 
 }
