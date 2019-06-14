@@ -196,6 +196,7 @@ class SpreadsheetSeeder extends Seeder
         }
 
         foreach ($fileIterator as $this->seedFile) {
+            if (substr($this->seedFile->getFilename(), 0, 1) === "~" ) continue;
             $this->seed();
         }
     }
@@ -294,7 +295,7 @@ class SpreadsheetSeeder extends Seeder
      */
     private function composeRows()
     {
-        $composer = new RowComposer( $this->seedHeader, $this->defaults, $this->timestamps, $this->hashable, $this->validate );
+        $composer = new RowComposer( $this->seedTable, $this->seedHeader, $this->defaults, $this->timestamps, $this->hashable, $this->validate );
 
         foreach($this->seedWorksheet->getRowIterator() as $row)
         {
@@ -310,7 +311,6 @@ class SpreadsheetSeeder extends Seeder
             $rowArray = [];
             foreach($row->getCellIterator() as $cell) {
                 $value = $cell->getCalculatedValue();
-                if ( is_null($value) ) $value = "";
                 $rowArray[] = $value;
             }
             $composedRow = $composer->compose($rowArray);

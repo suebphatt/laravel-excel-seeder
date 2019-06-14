@@ -7,6 +7,10 @@ use Hash;
 
 class RowComposer
 {
+    /**
+     * @var Table
+     */
+    private $table;
     private $header;
     private $defaults     = [];
     private $timestamps   = TRUE;
@@ -28,8 +32,10 @@ class RowComposer
      * @param array $hashable
      * @param array $validate
      */
-    public function __construct( $header, $defaults, $timestamps, $hashable, $validate )
+    public function __construct( $table, $header, $defaults, $timestamps, $hashable, $validate )
     {
+        $this->table = $table;
+
         $this->header = $header;
 
         $this->defaults = $defaults === NULL ? $this->defaults : $defaults;
@@ -60,7 +66,8 @@ class RowComposer
         if( ! $this->doValidate() ) return FALSE;
 
         foreach( $this->row as $this->key => $this->value )
-        {    
+        {
+            $this->isNullCellValue();
             $this->isEmptyValue();
             
             $this->doEncode();
@@ -116,6 +123,15 @@ class RowComposer
         if( $validator->fails() ) return FALSE;
 
         return TRUE;
+    }
+
+    /**
+     *
+     */
+    private function isNullCellValue() {
+        if (is_null($this->value)) {
+            $this->value = $this->table->defaultValue($this->key, $this->timestamps);
+        }
     }
 
     /**
