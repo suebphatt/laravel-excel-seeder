@@ -23,7 +23,7 @@ This project was forked from [laravel-csv-seeder](https://github.com/jeroenzwart
 - Or add this package in your composer.json and run `composer update`
 
     ```
-    "bfinlay/laravel-csv-seeder": "~2.0"
+    "bfinlay/laravel-spreadsheet-seeder": "~2.0"
     ```
 
 ## Basic usage
