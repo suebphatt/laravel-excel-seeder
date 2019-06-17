@@ -1,4 +1,4 @@
-# Laravel Spreadsheet Seeder
+# Laravel Excel Seeder
 > #### Seed your database using CSV files, XLSX files, and more with Laravel
 
 With this package you can save time seeding your database. Instead of typing out seeder files, you can use CSV, XLSX, or any supported spreadsheet file format to load your project's database. There are configuration options available to control the insertion of data from your spreadsheet files.
@@ -19,11 +19,11 @@ This project was forked from [laravel-csv-seeder](https://github.com/jeroenzwart
 - Adjust Laravel's timestamp at seeding.
 
 ## Installation
-- Require this package directly by `composer require --dev bfinlay/laravel-spreadsheet-seeder`
+- Require this package directly by `composer require --dev bfinlay/laravel-excel-seeder`
 - Or add this package in your composer.json and run `composer update`
 
     ```
-    "bfinlay/laravel-spreadsheet-seeder": "~2.0"
+    "bfinlay/laravel-excel-seeder": "~2.0"
     ```
 
 ## Basic usage

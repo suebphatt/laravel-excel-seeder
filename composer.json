@@ -1,7 +1,7 @@
 {
-	"name": "bfinlay/laravel-spreadsheet-seeder",
-	"description": "Seed the database with Laravel using XLSX, XLS, CSV, ODS, Gnumeric, XML, HTML, SLK files",
-	"homepage": "https://github.com/bfinlay/laravel-spreadsheet-seeder",
+	"name": "bfinlay/laravel-excel-seeder",
+	"description": "Seed the database with Laravel using Excel, XLSX, XLS, CSV, ODS, Gnumeric, XML, HTML, SLK files",
+	"homepage": "https://github.com/bfinlay/laravel-excel-seeder",
 	"authors": [
 		{
 			"name": "Brion Finlay"
