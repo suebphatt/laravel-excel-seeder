@@ -35,7 +35,7 @@ class UsersTableSeeder extends SpreadsheetSeeder
 {
     public function __construct()
     {
-        $this->file = '/database/seeds/csvs/*.csv'; // specify relative to Laravel project base path
+        $this->file = '/database/seeds/*.xlsx'; // specify relative to Laravel project base path
     }
     
     /**
@@ -45,13 +45,21 @@ class UsersTableSeeder extends SpreadsheetSeeder
      */
     public function run()
     {
-        // Recommended when importing larger CSVs
+        // Recommended when importing larger spreadsheets
 	    DB::disableQueryLog();
 	    parent::run();
     }
 }
 ```
-Place your spreadsheets into the path */database/seeds/csvs/* of your Laravel project or whatever path you specify in the constructor. As default the given spreadsheet requires a header row with names that match the columns names of the table in your database.  
+Place your spreadsheets into the path */database/seeds/* of your Laravel project or whatever path you specify in the constructor. As default the given spreadsheet requires a header row with names that match the columns names of the table in your database.  
+
+
+An Excel example:
+
+| first_name    | last_name     | birthday   |
+| ------------- | ------------- | ---------- |
+| Foo           | Bar           | 1970-01-01 |
+| John          | Doe           | 1980-01-01 |
 
 A CSV example:
 ```
