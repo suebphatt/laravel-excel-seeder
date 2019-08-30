@@ -85,8 +85,15 @@ A CSV example:
 - `chunk` *(integer 50)* - Insert the data of rows every `chunk` while reading the CSV. _Note: the PhpSpreadsheet library loads the entire spreadsheet file into memory.  See issue #1_
 
 
+## Details
+#### Null values
+- String conversions: 'null' is converted to `NULL`, 'true' is converted to `TRUE`, 'false' is converted to `FALSE`
+- 'null' strings converted to `NULL` are treated as explicit nulls.  They are not subject to implicit conversions to default values. 
+- Empty cells are set to the default value specified in the database table data definition, unless the entire row is empty
+- If the entire row consists of empty cells, the row is skipped.  To intentionally insert a null row, put the string value 'null' in each cell
+
 ## Examples
-#### Table with given timestamps
+#### Table with specified timestamps
 Give the seeder a specific table name instead of using the CSV filename;
 ```php
 	public function __construct()
@@ -125,13 +132,16 @@ Seed a table with aliases and default values, like this;
 ```
 
 #### Skipper
-Skip a column in a CSV with a prefix. For example you use `id` in your CSV and only usable in your CSV editor. The following CSV file looks like so;
+Skip a worksheet in a workbook, or a column in an spreadsheet or CSV with a prefix. For example you use `id` in your CSV and only usable in your CSV editor. The following CSV file looks like so;
 
     %id,first_name,last_name,%id_copy,birthday
     1,Foo,Bar,1,1970-01-01
     2,John,Doe,2,1980-01-01
 
-The first and fourth value of each row will be skipped with seeding. The default prefix is '%' and changeable to;
+The first and fourth value of each row will be skipped with seeding. The default prefix is '%' and changeable
+
+_(issue: custom skipper example demonstrates using a string, but currently only a character is supported)_
+
 ```php
 	public function __construct()
 	{
@@ -139,6 +149,8 @@ The first and fourth value of each row will be skipped with seeding. The default
 		$this->skipper = 'custom_';
 	}
 ```
+
+To skip a worksheet in a workbook, prefix the worksheet name with '%' or the specified skipper character.
 
 #### Validate
 Validate each row of a CSV like this;
@@ -165,3 +177,10 @@ Hash values when seeding a CSV like this;
 
 ## License
 Laravel CSV Seeder is open-sourced software licensed under the MIT license.
+
+## Changes
+#### 2.02
+- skip rows that are entirely empty cells
+- skip worksheet tabs that are prefixed with the skipper character.  This allows for additional sheets to be used for documentation, alternative designs, or intermediate calculations.
+- issue #2 - workaround to skip reading and calculating cells that are part of a skipped column.   Common use case is using `=index(X:X,match(Y,Z:Z,0))` in a skipped column to verify foreign keys.
+

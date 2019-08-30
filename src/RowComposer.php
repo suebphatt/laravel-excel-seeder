@@ -65,10 +65,13 @@ class RowComposer
 
         if( ! $this->doValidate() ) return FALSE;
 
+        $nullRow = true;
         foreach( $this->row as $this->key => $this->value )
         {
-            $this->isNullCellValue();
-            $this->isEmptyValue();
+            if (!is_null($this->value)) $nullRow = false;
+            
+            $this->transformNullCellValue();
+            $this->transformEmptyValue();
             
             $this->doEncode();
 
@@ -76,6 +79,8 @@ class RowComposer
 
             $this->composedRow[ $this->key ] = $this->value;
         }
+        // if individual cells are null, they are replaced with default values.  If the entire row is null, it is skipped.
+        if ($nullRow) return false;
 
         $this->addDefaults();
         
@@ -128,18 +133,18 @@ class RowComposer
     /**
      *
      */
-    private function isNullCellValue() {
+    private function transformNullCellValue() {
         if (is_null($this->value)) {
             $this->value = $this->table->defaultValue($this->key, $this->timestamps);
         }
     }
-
+    
     /**
      * Set the string value of a boolean to real boolean
      *
      * @return void
      */
-    private function isEmptyValue()
+    private function transformEmptyValue()
     {
         if( strtoupper($this->value) == 'NULL' ) $this->value = NULL;
 

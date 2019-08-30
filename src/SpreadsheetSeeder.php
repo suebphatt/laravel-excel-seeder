@@ -211,6 +211,9 @@ class SpreadsheetSeeder extends Seeder
         $this->seedSpreadsheet = $this->seedReader->load($filename);
 
         foreach ($this->seedSpreadsheet->getWorksheetIterator() as $this->seedWorksheet) {
+            // skip worksheets with titles that begin with the skipper character (default: %)
+            if( $this->skipper == substr($this->seedWorksheet->getTitle(), 0, 1) ) continue;
+
             $this->setupSeedTable();
             $this->setHeader();
             $this->setMapping();
@@ -309,14 +312,20 @@ class SpreadsheetSeeder extends Seeder
             if( empty($row) ) continue;
 
             $rowArray = [];
-            foreach($row->getCellIterator() as $cell) {
-                $value = $cell->getCalculatedValue();
-                $rowArray[] = $value;
+            $cellIterator = $row->getCellIterator();
+            $colIndex = 0;
+            foreach($cellIterator as $cell) {
+                // skip cells where the column has been marked to skip
+                if (array_key_exists($colIndex, $this->seedHeader)) {
+                    $value = $cell->getCalculatedValue();
+                    $rowArray[$colIndex] = $value;
+                }
+                $colIndex++;
             }
             $composedRow = $composer->compose($rowArray);
-            
+
             if( ! $composedRow ) continue;
-            
+
             $this->composedRows[] = $composedRow;
 
             $this->count ++;
