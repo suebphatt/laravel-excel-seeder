@@ -5,7 +5,7 @@ namespace bfinlay\SpreadsheetSeeder;
 use DB;
 
 class HeaderComposer
-{   
+{
     private $aliases      = [];
     private $skipper      = '%';
 
@@ -62,7 +62,7 @@ class HeaderComposer
     private function aliasColumns()
     {
         if( empty($this->aliases) ) return;
-        
+
         if( array_key_exists($this->name, $this->aliases) )
         {
             $this->name = $this->aliases[$this->name];
@@ -77,11 +77,11 @@ class HeaderComposer
      */
     private function skipColumns()
     {
-        if( ! isset($this->skipper) ) return; 
+        if( ! isset($this->skipper) ) return;
 
-        if( $this->skipper != substr($this->name, 0, 1) ) $this->composedHeader[$this->key] = $this->name;
+        if( $this->skipper != substr($this->name, 0, strlen($this->skipper)) ) $this->composedHeader[$this->key] = $this->name;
     }
-    
+
     /**
      * Check if a column exists in the table
      *

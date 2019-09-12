@@ -30,7 +30,7 @@ class SpreadsheetSeeder extends Seeder
     /**
      * Truncate table before seeding
      * Default: TRUE
-     * 
+     *
      * @var boolean
      */
     public $truncate = TRUE;
@@ -46,7 +46,7 @@ class SpreadsheetSeeder extends Seeder
     /**
      * The character that split the values in the CSV
      * Default: empty - autodetected by phpspreadsheet library
-     * 
+     *
      * @var string
      */
     public $delimiter;
@@ -56,7 +56,7 @@ class SpreadsheetSeeder extends Seeder
      * Name map the columns of the CSV to the columns in table
      * Mapping can also be used when there are headers in the CSV. The headers will be skipped.
      * Example: ['firstCsvColumn', 'secondCsvColumn']
-     * 
+     *
      * @var array
      */
     public $mapping;
@@ -102,7 +102,7 @@ class SpreadsheetSeeder extends Seeder
      *
      * @var string
      */
-    public $skipper;
+    public $skipper = "%";
 
     /**
      * Set the Laravel timestamps while seeding data
@@ -118,7 +118,7 @@ class SpreadsheetSeeder extends Seeder
     /**
      * Number of rows to skip at the start of the CSV, excluding the header
      * Default: 0
-     * 
+     *
      * @var integer
      */
     public $offset = 0;
@@ -126,7 +126,7 @@ class SpreadsheetSeeder extends Seeder
     /**
      * Insert into SQL database in blocks of CSV data while parsing the CSV file
      * Default: 50
-     * 
+     *
      * @var integer
      */
     public $chunk = 50;
@@ -212,7 +212,7 @@ class SpreadsheetSeeder extends Seeder
 
         foreach ($this->seedSpreadsheet->getWorksheetIterator() as $this->seedWorksheet) {
             // skip worksheets with titles that begin with the skipper character (default: %)
-            if( $this->skipper == substr($this->seedWorksheet->getTitle(), 0, 1) ) continue;
+            if( $this->skipper == substr($this->seedWorksheet->getTitle(), 0, strlen($this->skipper)) ) continue;
 
             $this->setupSeedTable();
             $this->setHeader();
@@ -346,7 +346,7 @@ class SpreadsheetSeeder extends Seeder
     {
         if( empty($this->composedRows) ) return;
 
-        try 
+        try
         {
             $this->seedTable->insertRows($this->composedRows);
 
@@ -364,7 +364,7 @@ class SpreadsheetSeeder extends Seeder
             $this->console('Rows of the file "'.$this->seedFile->getFilename().'" sheet "'.$this->seedWorksheet->getTitle().'" has failed to insert in table "'.$this->seedTable->name.'": ' . $e->getMessage(), 'error' );
 
             die();
-        }        
+        }
     }
 
     /**
@@ -378,9 +378,9 @@ class SpreadsheetSeeder extends Seeder
         $this->total = 0;
         $this->resultCount = 0;
     }
- 
+
     /**
-     * Strip 
+     * Strip
      *
      * @param [type] $string
      * @return string
@@ -389,10 +389,10 @@ class SpreadsheetSeeder extends Seeder
     {
         $bom    = pack('H*', 'EFBBBF');
         $string = preg_replace("/^$bom/", '', $string);
-        
+
         return $string;
     }
-    
+
     /**
      * Logging
      *
