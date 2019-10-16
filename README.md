@@ -74,7 +74,7 @@ A CSV example:
 - `tablename` *(string*) - Name of table to insert data.
 - `truncate` *(boolean TRUE)*  - Truncate the table before seeding.
 - `header` *(boolean TRUE)* - CSV has a header row, set FALSE if not.
-- `$worksheetTableMapping` *(array []) - Associative array of worksheet tab names to table names; worksheetName => tableName 
+- `worksheetTableMapping` *(array []) - Associative array of worksheet tab names to table names; worksheetName => tableName 
 - `mapping` *(array [])* - Associative array of column names in order as CSV, if empy the first row of CSV will be used as header.
 - `aliases` *(array [])* - Associative array of CSV header names and column names; csvColumnName => aliasColumnName.
 - `skipper` *(string %)* - Skip a CSV header and data to import in the table.
@@ -115,7 +115,7 @@ Handle like this;
 	public function __construct()
 	{
 		$this->file = '/database/seeds/xlsx/example.xls';
-		$this->$worksheetTableMapping = ['Sheet1' => 'first_table', 'Sheet2' => 'second_table'];
+		$this->worksheetTableMapping = ['Sheet1' => 'first_table', 'Sheet2' => 'second_table'];
 	}
 ```
 
