@@ -70,10 +70,11 @@ A CSV example:
 
 ## Configuration
 - `file` *(string*) or *(array []*) - list of files or directories to process.   Can include wildcards.
-- `extension` *(string 'csv'*) - the default extension used when a directory is speficied in `file`
+- `extension` *(string 'csv'*) - the default extension used when a directory is specified in `file`
 - `tablename` *(string*) - Name of table to insert data.
 - `truncate` *(boolean TRUE)*  - Truncate the table before seeding.
 - `header` *(boolean TRUE)* - CSV has a header row, set FALSE if not.
+- `$worksheetTableMapping` *(array []) - Associative array of worksheet tab names to table names; worksheetName => tableName 
 - `mapping` *(array [])* - Associative array of column names in order as CSV, if empy the first row of CSV will be used as header.
 - `aliases` *(array [])* - Associative array of CSV header names and column names; csvColumnName => aliasColumnName.
 - `skipper` *(string %)* - Skip a CSV header and data to import in the table.
@@ -101,6 +102,20 @@ Give the seeder a specific table name instead of using the CSV filename;
 		$this->file = '/database/seeds/csvs/users.csv';
 		$this->tablename = 'email_users';
 		$this->timestamps = '1970-01-01 00:00:00';
+	}
+```
+
+#### Worksheet to Table Mapping
+Map the worksheet tab names to table names.
+
+Excel worksheet tabs have a 31 character limit.  This is useful when the table name should be longer than the worksheet tab character limit.
+
+Handle like this;    
+```php
+	public function __construct()
+	{
+		$this->file = '/database/seeds/xlsx/example.xls';
+		$this->$worksheetTableMapping = ['Sheet1' => 'first_table', 'Sheet2' => 'second_table'];
 	}
 ```
 
@@ -179,6 +194,12 @@ Hash values when seeding a CSV like this;
 Laravel CSV Seeder is open-sourced software licensed under the MIT license.
 
 ## Changes
+#### 2.04
+- add worksheet to table mapping for mapping worksheet tab names to different table names
+- add example Excel spreadsheet '/database/seeds/xlsx/classicmodels.xlsx'
+#### 2.03
+- set default 'skipper' prefix to '%'
+- recognize 'skipper' prefix strings greater than 1 character in length 
 #### 2.02
 - skip rows that are entirely empty cells
 - skip worksheet tabs that are prefixed with the skipper character.  This allows for additional sheets to be used for documentation, alternative designs, or intermediate calculations.

@@ -52,6 +52,19 @@ class SpreadsheetSeeder extends Seeder
     public $delimiter;
 
     /**
+     * Array of worksheet names as key and table names as value
+     * Name map worksheets of an Excel file to table names
+     * Excel worksheets have a 31 character limit.
+     * This is useful when the table name should be longer than the worksheet character limit.
+     *
+     * Example: ['Sheet1' => 'first_table', 'Sheet2' => 'second_table']
+     *
+     * @var array
+     */
+    public $worksheetTableMapping = [];
+
+
+    /**
      * Array of column names used in the CSV
      * Name map the columns of the CSV to the columns in table
      * Mapping can also be used when there are headers in the CSV. The headers will be skipped.
@@ -231,7 +244,11 @@ class SpreadsheetSeeder extends Seeder
             $tableName = $this->seedFile->getBasename("." . $this->seedFile->getExtension());
         }
         else {
-            $tableName = $this->seedWorksheet->getTitle();
+            $worksheetName = $this->seedWorksheet->getTitle();
+            if (isset($this->worksheetTableMapping[$worksheetName]))
+                $tableName = $this->worksheetTableMapping[$worksheetName];
+            else
+                $tableName = $worksheetName;
         }
 
         $this->seedTable = new Table($tableName);
