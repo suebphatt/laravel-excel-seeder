@@ -73,7 +73,7 @@ class RowComposer
             $this->transformNullCellValue();
             $this->transformEmptyValue();
             
-            $this->doEncode();
+            //$this->doEncode();
 
             $this->doHashable();
 
